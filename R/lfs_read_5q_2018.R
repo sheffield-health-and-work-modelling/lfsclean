@@ -83,8 +83,7 @@ lfs_read_5q_2018 <- function(
     id_weights_vars  <- Hmisc::Cs(id, persid, lgwt22, month)
 
     demographic_vars <- Hmisc::Cs(sex,
-                                  age1, age2, age3, age4, age5,
-                                  etukeul1, etukeul2, etukeul3, etukeul4, etukeul5)
+                                  age1, age2, age3, age4, age5)
 
     education_vars   <- Hmisc::Cs(hiqul22d1, hiqul22d2, hiqul22d3, hiqul22d4, hiqul22d5)
 
@@ -124,8 +123,7 @@ lfs_read_5q_2018 <- function(
     id_weights_vars  <- Hmisc::Cs(persid, lgwt22)
 
     demographic_vars <- Hmisc::Cs(sex,
-                                  age1, age2, age3, age4, age5,
-                                  etukeul1, etukeul2, etukeul3, etukeul4, etukeul5)
+                                  age1, age2, age3, age4, age5)
 
     education_vars   <- Hmisc::Cs(hiqul22d1, hiqul22d2, hiqul22d3, hiqul22d4, hiqul22d5)
 
@@ -161,6 +159,12 @@ lfs_read_5q_2018 <- function(
                 clean.data.list[[4]], fill=TRUE)
 
   ### generate missing values for variables not in this year
+
+  data[, etukeul1 := NA]
+  data[, etukeul2 := NA]
+  data[, etukeul3 := NA]
+  data[, etukeul4 := NA]
+  data[, etukeul5 := NA]
 
   data[, govtof21 := NA]
   data[, govtof22 := NA]
