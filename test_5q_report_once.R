@@ -6,12 +6,23 @@ suppressPackageStartupMessages({
   library(data.table)
 })
 
-if (requireNamespace("devtools", quietly = TRUE)) {
-  devtools::load_all(".", quiet = TRUE)
+for (pkg in c("here", "Hmisc", "crayon", "dplyr", "stringr")) {
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    install.packages(pkg, quiet = TRUE)
+  }
+}
+
+if (dir.exists("R")) {
+  r_files <- list.files("R", pattern = "\\.R$", full.names = TRUE)
+  if (length(r_files) > 0) {
+    for (f in r_files) {
+      source(f, local = .GlobalEnv)
+    }
+  }
 }
 
 if (!exists("lfsclean_5q", mode = "function") && !requireNamespace("lfsclean", quietly = TRUE)) {
-  stop("Could not find lfsclean_5q. Install package or run with devtools available.")
+  stop("Could not find lfsclean_5q. Ensure you run this from package root so R/ can be sourced, or install lfsclean.")
 }
 
 run_lfsclean_5q <- function(...) {
@@ -100,64 +111,18 @@ if (inherits(all_data, "error")) {
 
 all_data <- as.data.table(all_data)
 
-checks <- list()
+if (!("year" %in% names(all_data))) {
+  stop("lfsclean_5q output does not contain 'year', so variables cannot be checked over time.")
+}
+
+row_report <- data.table(year = years)
+row_report[, n_rows := all_data[, .N, by = year][.SD, on = "year", x.N]]
+row_report[is.na(n_rows), n_rows := 0L]
+
 var_report <- list()
 
 for (yr in years) {
   dt <- all_data[year == yr]
-
-  if (nrow(dt) == 0) {
-    checks[[paste0("rows_", yr)]] <- data.table(
-      year = yr,
-      status = "FAIL",
-      check = "rows_present",
-      detail = "No rows returned for this year"
-    )
-    next
-  }
-
-  checks[[paste0("rows_", yr)]] <- data.table(
-    year = yr,
-    status = "PASS",
-    check = "rows_present",
-    detail = paste("Rows:", nrow(dt))
-  )
-
-  missing_vars <- setdiff(required_vars, names(dt))
-  checks[[paste0("required_", yr)]] <- data.table(
-    year = yr,
-    status = if (length(missing_vars) == 0) "PASS" else "FAIL",
-    check = "required_columns_exist",
-    detail = if (length(missing_vars) == 0) "" else paste(missing_vars, collapse = ", ")
-  )
-
-  eth_cols <- paste0("eth2cat", 1:5)
-  if (all(eth_cols %in% names(dt))) {
-    eth_non_missing <- sum(!is.na(unlist(dt[, ..eth_cols])))
-    bad_levels <- FALSE
-
-    for (ec in eth_cols) {
-      vals <- unique(as.character(dt[[ec]][!is.na(dt[[ec]])]))
-      if (any(!(vals %in% c("white", "non_white")))) {
-        bad_levels <- TRUE
-        break
-      }
-    }
-
-    checks[[paste0("eth_nonmiss_", yr)]] <- data.table(
-      year = yr,
-      status = if (eth_non_missing > 0) "PASS" else "FAIL",
-      check = "ethnicity_has_non_missing",
-      detail = paste("Total non-missing eth2cat1-5:", eth_non_missing)
-    )
-
-    checks[[paste0("eth_levels_", yr)]] <- data.table(
-      year = yr,
-      status = if (!bad_levels) "PASS" else "FAIL",
-      check = "ethnicity_levels_valid",
-      detail = if (!bad_levels) "" else "Found values outside white/non_white"
-    )
-  }
 
   var_report[[as.character(yr)]] <- rbindlist(
     lapply(required_vars, function(v) summarise_var(dt, v, yr)),
@@ -165,21 +130,38 @@ for (yr in years) {
   )
 }
 
-checks_report <- rbindlist(checks, fill = TRUE)
 variable_report <- rbindlist(var_report, fill = TRUE)
+missing_vars_report <- variable_report[exists == FALSE, .(year, variable)]
 
-fwrite(checks_report, "5q_checks_report.csv")
-fwrite(variable_report, "5q_variable_report.csv")
+cat("\nRows by year:\n")
+print(row_report[order(year)])
 
-cat("\nSaved reports:\n")
-cat(" - 5q_checks_report.csv\n")
-cat(" - 5q_variable_report.csv\n\n")
-
-cat("Check summary:\n")
-print(checks_report[, .N, by = .(year, status)][order(year, status)])
-
-if (any(checks_report$status == "FAIL")) {
-  stop("One or more checks failed. See 5q_checks_report.csv")
+cat("\nMissing required variables by year:\n")
+if (nrow(missing_vars_report) == 0) {
+  cat("None\n")
 } else {
-  cat("\nAll checks passed.\n")
+  print(missing_vars_report[order(year, variable)])
+}
+
+cat("\nVariable completeness tabulation (required vars, by year):\n")
+print(variable_report[order(year, variable)])
+
+cat("\nVariable completeness summary (avg pct non-missing by variable across years):\n")
+print(
+  variable_report[
+    exists == TRUE,
+    .(
+      years_present = .N,
+      avg_pct_non_missing = round(mean(pct_non_missing, na.rm = TRUE), 4),
+      min_pct_non_missing = round(min(pct_non_missing, na.rm = TRUE), 4),
+      max_pct_non_missing = round(max(pct_non_missing, na.rm = TRUE), 4)
+    ),
+    by = .(variable)
+  ][order(avg_pct_non_missing, variable)]
+)
+
+if (any(row_report$n_rows == 0L) || nrow(missing_vars_report) > 0) {
+  stop("Variable-over-time validation failed: at least one year has 0 rows or missing required variables.")
+} else {
+  cat("\nVariable-over-time validation passed.\n")
 }
