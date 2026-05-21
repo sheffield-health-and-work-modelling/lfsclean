@@ -112,14 +112,6 @@ lfs_clean_global_5q <- function(data,
   data[, region5 := factor(govtof25, levels = c(1:2,4:13), labels = c("north_east","north_west","yorks_and_humber","east_mids","west_mids",
                                                                      "east_of_england","london","south_east","south_west","wales","scotland","northern_ireland"))]
 
-  ## disability
-
-  data[, disab1 := factor(disea1, levels = 1:2, labels = c("disabled","not_disabled"))]
-  data[, disab2 := factor(disea2, levels = 1:2, labels = c("disabled","not_disabled"))]
-  data[, disab3 := factor(disea3, levels = 1:2, labels = c("disabled","not_disabled"))]
-  data[, disab4 := factor(disea4, levels = 1:2, labels = c("disabled","not_disabled"))]
-  data[, disab5 := factor(disea5, levels = 1:2, labels = c("disabled","not_disabled"))]
-
   ## benefit receipt reason
 
   data[, benclaim1 := factor(ooben1, levels = 1:7, labels = c("jobseeker","sick","lone_parent","carer","other_oow_benefits","other_benefits","no_benefits"))]
@@ -148,7 +140,7 @@ lfs_clean_global_5q <- function(data,
   data <- data[, c("id", "persid", "lgwt", "sex", "quarter", "month", "year", "empl_sequence",
                    "age1", "age2", "age3", "age4", "age5",
                    "hiqual1", "hiqual2", "hiqual3", "hiqual4", "hiqual5",
-                   "disab1", "disab2", "disab3", "disab4", "disab5",
+                   "disea1", "disea2", "disea3", "disea4", "disea5",
                    "region1", "region2", "region3", "region4", "region5",
                    "eth2cat1", "eth2cat2", "eth2cat3", "eth2cat4", "eth2cat5",
                    "etukeul1", "etukeul2", "etukeul3", "etukeul4", "etukeul5",

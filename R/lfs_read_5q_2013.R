@@ -91,8 +91,8 @@ lfs_read_5q_2013 <- function(
     empstat_vars        <- Hmisc::Cs(ilodefr1, ilodefr2, ilodefr3, ilodefr4, ilodefr5,
                                      incac051, incac052, incac053, incac054, incac055)
 
-    #health_vars      <- Hmisc::Cs(disea1, disea2, disea3, disea4, disea5,
-    #                              illoff1, illoff2, illoff3, illoff4, illoff5)
+    health_vars      <- Hmisc::Cs(disea1, disea2, disea3, disea4, disea5,
+                    illoff1, illoff2, illoff3, illoff4, illoff5)
 
     #benefit_vars     <- Hmisc::Cs(clims141, clims142, clims143, clims144, clims145,
     #                              benfts1, benfts2, benfts3, benfts4, benfts5,
@@ -102,7 +102,7 @@ lfs_read_5q_2013 <- function(
                                grsswk1, grsswk2, grsswk3, grsswk4, grsswk5)
 
     names <- c(id_weights_vars, demographic_vars, education_vars, empstat_vars,
-               work_vars)
+               work_vars, health_vars)
 
     data <- data[ ,names, with=F]
 
@@ -126,18 +126,6 @@ lfs_read_5q_2013 <- function(
   data[, govtof23 := NA]
   data[, govtof24 := NA]
   data[, govtof25 := NA]
-
-  data[, disea1 := NA]
-  data[, disea2 := NA]
-  data[, disea3 := NA]
-  data[, disea4 := NA]
-  data[, disea5 := NA]
-
-  data[, illoff1 := NA]
-  data[, illoff2 := NA]
-  data[, illoff3 := NA]
-  data[, illoff4 := NA]
-  data[, illoff5 := NA]
 
   data[, clims141 := NA]
   data[, clims142 := NA]
