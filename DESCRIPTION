@@ -1,7 +1,7 @@
 Package: lfsclean
 Type: Package
 Title: Labour Force Survey (LFS) Data Wrangling
-Version: 1.2.0
+Version: 1.1.8
 Author: person(given = "Damon",
            family = "Morris",
            role = c("aut", "cre"),
