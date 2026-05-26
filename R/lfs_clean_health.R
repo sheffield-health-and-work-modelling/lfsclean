@@ -181,13 +181,16 @@ lfs_clean_health <- function(
   data$main_health_condition      <- as.factor(data$main_health_condition)
   data$main_health_condition_8cat <- as.factor(data$main_health_condition_8cat)
 
+  heal_vars <- grep("^heal", names(data), value = TRUE)
+
   ###############################
   ### RETAIN CLEANED VARIABLES
 
   final_data <- data[, c("obs_id",
                          "disability", "main_health_condition", "main_health_condition_8cat",
                          "musculoskeletal","sight_hearing","respiratory","blood_digestive_diabetes",
-                         "mental_health","lda","other_health_cond")]
+                         "mental_health","lda","other_health_cond",
+                         heal_vars)]
 
   var_names <- c("disability", "main_health_condition", "main_health_condition_8cat",
                  "musculoskeletal","sight_hearing","respiratory","blood_digestive_diabetes",
