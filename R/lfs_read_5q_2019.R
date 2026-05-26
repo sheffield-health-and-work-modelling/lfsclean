@@ -93,8 +93,15 @@ lfs_read_5q_2019 <- function(
     empstat_vars        <- Hmisc::Cs(ilodefr1, ilodefr2, ilodefr3, ilodefr4, ilodefr5,
                                      incac051, incac052, incac053, incac054, incac055)
 
-    health_vars      <- Hmisc::Cs(disea1, disea2, disea3, disea4, disea5,
-                    illoff1, illoff2, illoff3, illoff4, illoff5)
+    health_vars      <- c(
+      Hmisc::Cs(disea1, disea2, disea3, disea4, disea5,
+                illoff1, illoff2, illoff3, illoff4, illoff5),
+      intersect(c("heal011", "heal021", "heal031",
+                  "heal012", "heal022", "heal032",
+                  "heal013", "heal023", "heal033",
+                  "heal014", "heal024", "heal034",
+                  "heal015", "heal025", "heal035"), names(data))
+    )
 
     #benefit_vars     <- Hmisc::Cs(clims141, clims142, clims143, clims144, clims145,
     #                              benfts1, benfts2, benfts3, benfts4, benfts5,
