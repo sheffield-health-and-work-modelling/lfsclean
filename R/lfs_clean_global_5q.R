@@ -145,6 +145,8 @@ lfs_clean_global_5q <- function(data,
   #################################
   ### remove variables not needed and retain
 
+  heal_vars <- grep("^heal0", names(data), value = TRUE)
+
   data <- data[, c("id", "persid", "lgwt", "sex", "quarter", "month", "year", "empl_sequence",
                    "age1", "age2", "age3", "age4", "age5",
                    "hiqual1", "hiqual2", "hiqual3", "hiqual4", "hiqual5",
@@ -159,7 +161,8 @@ lfs_clean_global_5q <- function(data,
                    "numsickdays1", "numsickdays2", "numsickdays3", "numsickdays4", "numsickdays5",
                    "benclaim1", "benclaim2", "benclaim3", "benclaim4", "benclaim5",
                    "uhours1", "uhours2", "uhours3", "uhours4", "uhours5",
-                   "grsswk1",                            "grsswk5")]
+                   "grsswk1",                            "grsswk5",
+                   heal_vars)]
 
   ##################################################################
   ### Match in inflation data and create real-earnings variables
