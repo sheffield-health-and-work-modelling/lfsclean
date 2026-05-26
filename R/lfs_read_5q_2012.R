@@ -106,6 +106,11 @@ lfs_read_5q_2012 <- function(
     names <- c(id_weights_vars, demographic_vars, education_vars, empstat_vars,
                work_vars)
 
+    missing_vars <- setdiff(names, names(data))
+    if (length(missing_vars) > 0) {
+      data[, (missing_vars) := NA]
+    }
+
     data <- data[ ,names, with=F]
 
     data$quarter <- l
