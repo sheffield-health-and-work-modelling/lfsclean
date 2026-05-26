@@ -147,22 +147,27 @@ lfs_clean_global_5q <- function(data,
 
   heal_vars <- grep("^heal0", names(data), value = TRUE)
 
-  data <- data[, c("id", "persid", "lgwt", "sex", "quarter", "month", "year", "empl_sequence",
-                   "age1", "age2", "age3", "age4", "age5",
-                   "hiqual1", "hiqual2", "hiqual3", "hiqual4", "hiqual5",
-                   "disea1", "disea2", "disea3", "disea4", "disea5",
-                   "disab1", "disab2", "disab3", "disab4", "disab5",
-                   "region1", "region2", "region3", "region4", "region5",
-                   "eth2cat1", "eth2cat2", "eth2cat3", "eth2cat4", "eth2cat5",
-                   "etukeul1", "etukeul2", "etukeul3", "etukeul4", "etukeul5",
-                   "empstat2cat1", "empstat2cat2", "empstat2cat3", "empstat2cat4", "empstat2cat5",
-                   "empstat3cat1", "empstat3cat2", "empstat3cat3", "empstat3cat4", "empstat3cat5",
-                   "empstat8cat1", "empstat8cat2", "empstat8cat3", "empstat8cat4", "empstat8cat5",
-                   "numsickdays1", "numsickdays2", "numsickdays3", "numsickdays4", "numsickdays5",
-                   "benclaim1", "benclaim2", "benclaim3", "benclaim4", "benclaim5",
-                   "uhours1", "uhours2", "uhours3", "uhours4", "uhours5",
-                   "grsswk1",                            "grsswk5",
-                   heal_vars)]
+  keep_cols <- c("id", "persid", "lgwt", "sex", "quarter", "month", "year", "empl_sequence",
+                 "age1", "age2", "age3", "age4", "age5",
+                 "hiqual1", "hiqual2", "hiqual3", "hiqual4", "hiqual5",
+                 "disea1", "disea2", "disea3", "disea4", "disea5",
+                 "disab1", "disab2", "disab3", "disab4", "disab5",
+                 "region1", "region2", "region3", "region4", "region5",
+                 "eth2cat1", "eth2cat2", "eth2cat3", "eth2cat4", "eth2cat5",
+                 "etukeul1", "etukeul2", "etukeul3", "etukeul4", "etukeul5",
+                 "empstat2cat1", "empstat2cat2", "empstat2cat3", "empstat2cat4", "empstat2cat5",
+                 "empstat3cat1", "empstat3cat2", "empstat3cat3", "empstat3cat4", "empstat3cat5",
+                 "empstat8cat1", "empstat8cat2", "empstat8cat3", "empstat8cat4", "empstat8cat5",
+                 "numsickdays1", "numsickdays2", "numsickdays3", "numsickdays4", "numsickdays5",
+                 "benclaim1", "benclaim2", "benclaim3", "benclaim4", "benclaim5",
+                 "uhours1", "uhours2", "uhours3", "uhours4", "uhours5",
+                 "grsswk1", "grsswk5",
+                 heal_vars)
+
+  keep_cols <- unique(keep_cols)
+  keep_cols <- intersect(keep_cols, names(data))
+
+  data <- data[, keep_cols, with = FALSE]
 
   ##################################################################
   ### Match in inflation data and create real-earnings variables
